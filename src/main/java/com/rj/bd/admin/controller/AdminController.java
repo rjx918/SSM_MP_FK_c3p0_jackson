@@ -2,6 +2,7 @@ package com.rj.bd.admin.controller;
 
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
@@ -15,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import com.rj.bd.admin.entity.Student;
 import com.rj.bd.admin.entity.User;
 import com.rj.bd.admin.service.IIndexService;
 import com.rj.bd.admin.service.ILoginService;
+import com.rj.bd.admin.service.IStudentlistService;
 import com.rj.bd.admin.utils.Putdata;
 
 import sun.print.resources.serviceui;
@@ -33,6 +36,9 @@ public class AdminController {
 	
 	@Autowired 
 	private IIndexService iindexService;
+	
+	@Autowired 
+	private IStudentlistService studentlistService;
 	
 	
 	@ResponseBody
@@ -90,4 +96,40 @@ public class AdminController {
 			return Putdata.printf(-1, "参数为空", null);
 		}
 	}
+	
+	//查询数据
+		@ResponseBody  //返回文本内容
+		@RequestMapping("/studentlist") //api地址
+		public Map<String, Object> studentlistinfo(User u) {
+			//1.判断穿过来的参数是否为空
+			if(u!=null){
+				//2. 判断有没token字段
+				if(u.getToken()!=null){
+					//3.验证token
+					User tokeninfo = loginService.verifyToken(u);
+					//4.判断tokeninfo是否为空
+					if (tokeninfo!=null) {
+						//这里已经验证成功了
+						System.out.println("验证成功");
+						 Map<String	,Object> map=new HashMap<String, Object>();
+						map.put("sid", studentlistService.query() );
+						map.put("sname", studentlistService.query());
+						map.put("mnumber", studentlistService.query());
+						map.put("snumber", studentlistService.query());
+						map.put("sclasses", studentlistService.query());
+						map.put("mnumberstate", studentlistService.query());
+						map.put("mnumbermoney", studentlistService.query());
+						return Putdata.printf(200, "获取成功", map);
+					}else {
+						return Putdata.printf(-3, "token失效", null);
+					}
+				}else{
+					return Putdata.printf(-2, "没有token字段", null);
+				}
+			}else{
+				return Putdata.printf(-1, "参数为空", null);
+			}
+		}
+	
+	
 }

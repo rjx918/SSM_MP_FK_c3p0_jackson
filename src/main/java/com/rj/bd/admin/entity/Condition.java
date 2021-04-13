@@ -20,4 +20,9 @@ public class Condition {
 	private String c_id;
 	private String c_condition;
 	private String m_id;
+	
+	
+	
+	
+	
 }

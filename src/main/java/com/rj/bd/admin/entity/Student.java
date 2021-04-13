@@ -16,4 +16,7 @@ import lombok.Data;
 public class Student {
 	private String s_id;
 	private String s_student;
+	
+	
+	
 }

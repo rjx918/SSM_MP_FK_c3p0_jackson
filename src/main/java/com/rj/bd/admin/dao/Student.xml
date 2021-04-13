@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<mapper namespace="com.rj.bd.admin.entity.Query">
+		<resultMap type="Info" id="noticeResult">
+			<result property="s_id" column="s_id"/>
+			<result property="s_student" column="s_student"/>
+			<result property="d_class" column="d_class"/>
+			<result property="m_id" column="m_id"/>
+			<result property="m_number" column="m_number"/>
+			<result property="m_studentnum" column="m_studentnum"/>
+			<result property="c_condition" column="c_condition"/>
+			<result property="m_money" column="m_money"/>
+			
+			
+		</resultMap>
+
+		<select id="fiandAll"  resultMap="noticeResult">
+			SELECT sa.s_id ,sa.s_student,sa.d_class,sb.m_id,sb.m_number,sb.m_studentnum, sb.c_condition,sb.m_money FROM  (
+			SELECT student.s_id,student.s_student , `data`.d_class FROM student LEFT JOIN `data` ON student.s_id = `data`.s_id
+			)sa 
+			LEFT JOIN (SELECT message.m_id,message.s_id,message.m_number,message.m_studentnum,`condition`.c_condition,money.m_money 
+			FROM message 
+			RIGHT JOIN `condition` ON message.m_id=`condition`.m_id 
+			RIGHT JOIN money ON message.m_id=money.m_id
+			)sb  ON sa.s_id = sb.s_id
+
+			</select>
+
+	</mapper>
