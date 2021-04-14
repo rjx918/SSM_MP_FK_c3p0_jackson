@@ -3,6 +3,8 @@
  */
 package com.rj.bd.admin.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+
 import lombok.Data;
 
 /**
@@ -14,9 +16,10 @@ import lombok.Data;
 
 @Data
 public class Student {
+	@TableId
 	private String s_id;
 	private String s_student;
-	
+
 	
 	
 }

@@ -3,6 +3,7 @@
  */
 package com.rj.bd.admin.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Data;
@@ -14,15 +15,12 @@ import lombok.Data;
  * @time 2021年4月13日 上午10:09:46
  */
 
+
 @Data
 @TableName("`condition`")
 public class Condition {
-	private String c_id;
+	@TableId
+	private Integer c_id;
 	private String c_condition;
 	private String m_id;
-	
-	
-	
-	
-	
 }

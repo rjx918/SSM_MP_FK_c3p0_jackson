@@ -3,7 +3,11 @@
  */
 package com.rj.bd.admin.dao;
 
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.rj.bd.admin.entity.Money;
@@ -18,6 +22,12 @@ public interface MoneyMapper extends BaseMapper<Money>{
 	
 	@Select("SELECT sum(m_money)  FROM money ")
 	public float getsum();
+	
+	@Select("SELECT *  FROM money  where m_id=#{m_id}")
+	Map<String, String> getMonById(String m_id);
+	
+	@Update("UPDATE `money` SET m_money=#{m_money} WHERE m_id=#{m_id}")
+	int updateMonById(@Param("m_id")String m_id,@Param("m_money")String m_money );
 	
 
 }
