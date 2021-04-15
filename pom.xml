@@ -195,6 +195,15 @@
 					
 					
 					
+					<!-- excel所用jar包的依赖 -->
+					<dependency>
+						<groupId>org.apache.poi</groupId>
+						<artifactId>poi-ooxml</artifactId>
+						<version>4.0.1</version>
+					</dependency>
+					
+					
+					
   </dependencies>
   <build>
     <finalName>SSM_MP_FK_c3p0_jackson</finalName>

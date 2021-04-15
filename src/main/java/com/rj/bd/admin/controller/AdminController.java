@@ -1,5 +1,7 @@
 package com.rj.bd.admin.controller;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +9,14 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.aspectj.weaver.patterns.HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStuffAnywhereVisitor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.YamlMapFactoryBean;
@@ -19,6 +28,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import com.rj.bd.admin.entity.Condition;
 import com.rj.bd.admin.entity.Message;
 import com.rj.bd.admin.entity.Money;
+import com.rj.bd.admin.entity.Query;
 import com.rj.bd.admin.entity.Student;
 import com.rj.bd.admin.entity.User;
 import com.rj.bd.admin.service.IIndexService;
@@ -365,7 +375,96 @@ public class AdminController {
 	}
 		
 
-	
+	@RequestMapping("/excel")
+	public Map<String, Object> Excel(HttpServletResponse response) throws UnsupportedEncodingException {
+		// 固定写法 复制就行 这里写导出excel的名字 设置下载在浏览器端，等用户下载
+		String fileName = "xinxi.xls";
+		
+		response.setHeader("Content-disposition",
+				"attachment;filename=" + new String(fileName.getBytes("UTF-8"), "utf-8"));// 设置文件头编码格式
+		response.setContentType("APPLICATION/OCTET-STREAM;charset=UTF-8");// 设置类型
+		response.setHeader("Cache-Control", "no-cache");// 设置头
+		response.setDateHeader("Expires", 0);// 设置日期头
+		// 获取数据库查询的所有数据
+		List<Query> list = studentlistService.query();
+		// 将查询结果带到页面 回显函数使用
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		
+		// 创建导出表格的对象
+		Workbook wb = new HSSFWorkbook();
+		
+		
+		// 创建表
+		Sheet sheet = wb.createSheet("sheet1");
+		// 获取表的第一行元素，也就是0行
+		Row row = sheet.createRow(0);
+		// 创建存放列的数组
+		Cell[] cell = new HSSFCell[8];
+		for (int i = 0; i < cell.length; i++) {
+			// 吧每一列放到数组中
+			cell[i] = row.createCell(i);
+		}
+		// 这个是写的标题头
+		// 给第0行第一列元素赋值
+		cell[0].setCellValue("序号");
+		cell[1].setCellValue("学生ID");
+		// 给第0行第二列元素赋值
+		cell[2].setCellValue("姓名");
+		// 给第0行第三列元素赋值
+		cell[3].setCellValue("班级");
+		// 给第0行第四列元素赋值
+		cell[4].setCellValue("卡号");
+		// 给第0行第五列元素赋值
+		cell[5].setCellValue("学号");
+		// 给第0行第六列元素赋值
+		cell[6].setCellValue("状态");
+		// 给第0行第七列元素赋值
+		cell[7].setCellValue("余额");
+		
+		
+		try {
+			// 循环获取从数据库中的集合每个pojo对象的数据
+			for (int i = 0; i < list.size(); i++) {
+				// 查询的每个对象的数据
+				Query query = list.get(i);
+				// 设置要插入的行为i+1(就是标题下的第一行)
+				Row row1 = sheet.createRow(i + 1);
+				// 创建存放列的数组
+				Cell[] cell2 = new HSSFCell[8];
+				for (int j = 0; j < cell.length; j++) {
+					// 吧每一列放到数组中
+					cell2[j] = row1.createCell(j);
+				}
+				cell2[0].setCellValue(i + 1);
+				cell2[1].setCellValue(query.getS_id());
+				cell2[2].setCellValue(query.getM_id());
+				cell2[3].setCellValue(query.getS_student());
+				cell2[4].setCellValue(query.getD_class());
+				cell2[5].setCellValue(query.getM_number());
+				cell2[6].setCellValue(query.getC_condition());
+				cell2[7].setCellValue(query.getM_money());
+			}
+			// 输出到下载人的电脑上
+			wb.write(response.getOutputStream());
+			// 刷新
+			response.getOutputStream().flush();
+			// 关闭
+			response.getOutputStream().close();
+		} catch (IOException e) {
+
+		} finally {
+			try {
+				if (wb != null) {
+					// 关闭流
+					wb.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return map;
+	}
 	
 	
 	

@@ -102,6 +102,12 @@
 		<property name="maxUploadSize" value="5242880"></property>
 	</bean>
 
+<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<bean class="com.rj.bd.admin.utils.CORSInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
 
 
 </beans>
