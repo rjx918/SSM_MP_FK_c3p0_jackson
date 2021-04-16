@@ -17,6 +17,9 @@ public class CORSInterceptor implements HandlerInterceptor {
 			throws Exception {
 		// TODO Auto-generated method stub
 		response.addHeader("Access-Control-Allow-Origin", "*");
+//		Content-Type: application/json;charset=utf-8
+		
+		response.addHeader("Content-Type", "application/json;charset=utf-8");
 		return true;
 	}
 

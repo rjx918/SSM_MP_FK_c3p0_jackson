@@ -27,12 +27,26 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 		<property name="jdbcUrl" value="${jdbc.url}" />
 		<property name="user" value="${jdbc.username}" />
 		<property name="password" value="${jdbc.password}" />
-		<property name="maxPoolSize" value="40" />      <!--最大连接数-->
-        <property name="minPoolSize" value="5" />       <!--最小连接数-->
-        <property name="initialPoolSize" value="10" />      <!--初始化连接池内的数据库连接-->
-        <property name="maxIdleTime" value="200000" />  <!--最大空闲时间-->
-		<property name="idleConnectionTestPeriod" value="60" />  <!--每60秒检查所有连接池中的空闲连接。Default: 0 --> 
+		<property name="maxPoolSize" value="40" />      <!--最大连接数 -->
+		<property name="minPoolSize" value="5" />       <!--最小连接数 -->
+		<property name="initialPoolSize" value="10" />      <!--初始化连接池内的数据库连接 -->
+		<property name="maxIdleTime" value="200000" />  <!--最大空闲时间 -->
+		<property name="idleConnectionTestPeriod" value="60" />  <!--每60秒检查所有连接池中的空闲连接。Default: 0 -->
 	</bean>
+	
+	
+	 <!-- 加载属性文件 -->
+   <!--  <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="order" value="1"/>
+         忽略不能读取的属性
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath:qiufeng-config.properties</value>
+            </list>
+        </property>
+    </bean>
+	 -->
 
 
 
@@ -83,4 +97,26 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 	<!-- 7. 使用声明式事务 transaction-manager：引用上面定义的事务管理器 -->
 	<tx:annotation-driven transaction-manager="txManager" />
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 </beans>

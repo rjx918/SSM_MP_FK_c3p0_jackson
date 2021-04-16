@@ -16,7 +16,7 @@
 	<!-- <mvc:resources mapping="/resources/*" location="/resources/"/> -->
 	
 
-
+<context:property-placeholder location="classpath:qiufeng-config.properties" />
 
 
 	<!-- 2.自动注解扫描包 -->
@@ -24,7 +24,6 @@
 		<context:include-filter type="annotation"  expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
 	
-
 
 	<!-- 3.定义跳转的文件的前后缀 ，视图模式配置 -->
 	<bean id="viewResolver"
@@ -39,7 +38,7 @@
 	<bean id="freeMarkerConfigurer"
 		class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
 		<!-- ftl模版文件路径 -->
-		<property name="templateLoaderPath" value="/WEB-INF/ftls/user/"></property>
+		<property name="templateLoaderPath" value="/WEB-INF/ftls/"></property>
 		<!-- 页面编码 -->
 		<property name="defaultEncoding" value="utf-8" />
 		<property name="freemarkerSettings">
@@ -59,8 +58,8 @@
 	
 
     
-    
-    
+
+
 
 
 

@@ -30,6 +30,7 @@
             <version>5.1.47</version>
         </dependency>
    
+   
        <!-- 3.c3p0数据库连接池包 -->
         <dependency>
             <groupId>com.mchange</groupId>
@@ -201,6 +202,37 @@
 						<artifactId>poi-ooxml</artifactId>
 						<version>4.0.1</version>
 					</dependency>
+					
+					<!--分页 -->
+					<dependency>
+						<groupId>com.github.pagehelper</groupId>
+						<artifactId>pagehelper</artifactId>
+						<version>4.1.4</version>
+						</dependency>
+		
+		<!--通用Mapper -->
+		<dependency>
+			<groupId>tk.mybatis</groupId>
+			<artifactId>mapper</artifactId>
+			<version>4.1.4</version>
+		</dependency>
+		
+		<!-- 文件上传 -->
+  			<dependency>
+			<groupId>com.qiniu</groupId>
+			<artifactId>qiniu-java-sdk</artifactId>
+			<version>[7.4.0, 7.4.99]</version>
+		</dependency>
+		
+		
+		
+
+	
+		
+
+
+
+		
 					
 					
 					

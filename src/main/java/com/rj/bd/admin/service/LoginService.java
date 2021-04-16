@@ -60,6 +60,20 @@ public class LoginService implements ILoginService {
 	
 	
 	
+	//写入头像 
+	public boolean SetImg(User u) {
+		UpdateWrapper<User> updateWrapper = Wrappers.update();
+		updateWrapper.eq("name", u.getName());
+		int ret = loginMapper.update(u, updateWrapper);
+		if (ret > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	
+	
 	
 	
 	

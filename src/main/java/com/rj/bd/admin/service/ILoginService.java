@@ -24,4 +24,9 @@ public interface ILoginService {
 	public boolean putToken(User u);
 	
 	
+	//上传图片
+	
+	public boolean SetImg(User u);
+	
+	
 }

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,20 +20,16 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.github.pagehelper.PageInfo;
 import com.rj.bd.admin.entity.Condition;
 import com.rj.bd.admin.entity.Message;
 import com.rj.bd.admin.entity.Money;
 import com.rj.bd.admin.entity.Query;
-import com.rj.bd.admin.entity.Student;
 import com.rj.bd.admin.entity.User;
 import com.rj.bd.admin.service.IIndexService;
 import com.rj.bd.admin.service.ILoginService;
@@ -42,12 +37,9 @@ import com.rj.bd.admin.service.IStudentlistService;
 import com.rj.bd.admin.service.IStudnetSevice;
 import com.rj.bd.admin.utils.PutFileUtils;
 import com.rj.bd.admin.utils.Putdata;
-import com.sun.org.apache.xpath.internal.operations.And;
-
-import sun.print.resources.serviceui;
 
 @Controller
-@ResponseBody // 返回文本内容
+//@ResponseBody // 返回文本内容
 @RequestMapping("/admin")
 public class AdminController {
 
@@ -67,7 +59,7 @@ public class AdminController {
 	
 
 	@RequestMapping("/login")
-	public Map<String, Object> loginAdmin(User u, HttpServletRequest request) {
+	public String loginAdmin(User u, HttpServletRequest request,Model model) {
 		System.out.println("登录页面");
 		System.out.println(u);
 		if (u != null) {
@@ -82,18 +74,18 @@ public class AdminController {
 						User retuser = new User();
 						retuser.setName(u.getName());
 						retuser.setToken(token);
-						return Putdata.printf(200, "登录成功", retuser);
+						retuser.setImgs(userinfo.getImgs());
+						return Putdata.printf(200, "登录成功", retuser,model);
 					}
 				}
 			}
 		}
-		return Putdata.printf(-1, "登录失败", null);
+		return Putdata.printf(-1, "登录失败", null,model);
 	}
 
 	// 首页数据
-
 	@RequestMapping("/index") // api地址
-	public Map<String, Object> indexinfo(User u) {
+	public String  indexinfo(User u,Model model) {
 		// 1.判断穿过来的参数是否为空
 		if (u != null) {
 			// 2. 判断有没token字段
@@ -109,45 +101,54 @@ public class AdminController {
 					map.put("cardlose", iindexService.getcardlose());
 					map.put("grossmoney", iindexService.getgrossmoney());
 					map.put("studentsum", iindexService.getstudentsum());
-					return Putdata.printf(200, "获取成功", map);
+					return Putdata.printf(200, "获取成功", map,model);
 				} else {
-					return Putdata.printf(-3, "token失效", null);
+					return Putdata.printf(-3, "token失效", null,model);
 				}
 			} else {
-				return Putdata.printf(-2, "没有token字段", null);
+				return Putdata.printf(-2, "没有token字段", null,model);
 			}
 		} else {
-			return Putdata.printf(-1, "参数为空", null);
+			return Putdata.printf(-1, "参数为空", null,model);
 		}
 	}
 
 	// 查询数据
-	@RequestMapping("/studentlist") // api地址
-	public Map<String, Object> studentlistinfo(User u) {
-		// 1.判断穿过来的参数是否为空
-		if (u != null) {
-			// 2. 判断有没token字段
-			if (u.getToken() != null) {
-				// 3.验证token
-				User tokeninfo = loginService.verifyToken(u);
-				// 4.判断tokeninfo是否为空
-				if (tokeninfo != null) {
-					// 这里已经验证成功了
-					System.out.println("验证成功");
-					return Putdata.printf(200, "获取成功", studentlistService.query());
-					
-					
-					
+		@RequestMapping("/studentlist") // api地址
+		public String studentlistinfo(User u,Integer page,Integer size,Model model) {
+			// 1.判断穿过来的参数是否为空
+			if (u != null) {
+				// 2. 判断有没token字段
+				if (u.getToken() != null) {
+					// 3.验证token
+					User tokeninfo = loginService.verifyToken(u);
+					// 4.判断tokeninfo是否为空
+					if (tokeninfo != null) {
+						// 这里已经验证成功了
+						System.out.println("验证成功");
+						if (page ==null) {
+							page = 0;
+						}
+						
+						if (size ==null) {
+							size = 0;
+						}
+						
+						if(size ==0){
+							size = 10;
+						}
+						page = page*size;
+						return Putdata.printf(200, "获取成功", studentlistService.query( page, size),model);
+					} else {
+						return Putdata.printf(-3, "token失效", null,model);
+					}
 				} else {
-					return Putdata.printf(-3, "token失效", null);
+					return Putdata.printf(-2, "没有token字段", null,model);
 				}
 			} else {
-				return Putdata.printf(-2, "没有token字段", null);
+				return Putdata.printf(-1, "参数为空", null,model);
 			}
-		} else {
-			return Putdata.printf(-1, "参数为空", null);
 		}
-	}
 	
 	
 	
@@ -160,7 +161,7 @@ public class AdminController {
 	
 	// 搜索数据
 	@RequestMapping("/studentsearch") // api地址
-	public Map<String, Object> studentsearchinfo(User u,String search) {
+	public String studentsearchinfo(User u,String search,Model model) {
 		// 1.判断穿过来的参数是否为空
 		if (u != null) {
 			// 2. 判断有没token字段
@@ -171,22 +172,22 @@ public class AdminController {
 				if (tokeninfo != null) {
 					// 这里已经验证成功了
 					System.out.println("验证成功");
-					return Putdata.printf(200, "获取成功", studentlistService.studentsearch(search));
+					return Putdata.printf(200, "获取成功", studentlistService.studentsearch(search),model);
 				} else {
-					return Putdata.printf(-3, "token失效", null);
+					return Putdata.printf(-3, "token失效", null,model);
 				}
 			} else {
-				return Putdata.printf(-2, "没有token字段", null);
+				return Putdata.printf(-2, "没有token字段", null,model);
 			}
 		} else {
-			return Putdata.printf(-1, "参数为空", null);
+			return Putdata.printf(-1, "参数为空", null,model);
 		}
 	}
 	
 	
 	// 增加学生
 	@RequestMapping("/studentadd") // api地址
-	public Map<String, Object> studentadd(User u,String snumber,String sclassesid) {
+	public String studentadd(User u,String snumber,String sclassesid,Model model) {
 		// 1.判断穿过来的参数是否为空
 		if (u != null) {
 			// 2. 判断有没token字段
@@ -197,15 +198,15 @@ public class AdminController {
 				if (tokeninfo != null) {
 					// 这里已经验证成功了
 					System.out.println("验证成功");
-					return Putdata.printf(200,studentlistService.studentadd(u.getName(),snumber,sclassesid) , null);
+					return Putdata.printf(200,studentlistService.studentadd(u.getName(),snumber,sclassesid) , null,model);
 				} else {
-					return Putdata.printf(-3, "token失效", null);
+					return Putdata.printf(-3, "token失效", null,model);
 				}
 			} else {
-				return Putdata.printf(-2, "没有token字段", null);
+				return Putdata.printf(-2, "没有token字段", null,model);
 			}
 		} else {
-			return Putdata.printf(-1, "参数为空", null);
+			return Putdata.printf(-1, "参数为空", null,model);
 		}
 	}
 	
@@ -213,7 +214,7 @@ public class AdminController {
 	
 	// 查询所有的班级
 	@RequestMapping("/classesinfo") // api地址
-	public Map<String, Object> classesinfo(User u) {
+	public String classesinfo(User u,Model model) {
 		// 1.判断穿过来的参数是否为空
 		if (u != null) {
 			// 2. 判断有没token字段
@@ -224,15 +225,15 @@ public class AdminController {
 				if (tokeninfo != null) {
 					// 这里已经验证成功了
 					System.out.println("验证成功");
-					return Putdata.printf(200,"获取成功" , studentlistService.classesinfo());
+					return Putdata.printf(200,"获取成功" , studentlistService.classesinfo(),model);
 				} else {
-					return Putdata.printf(-3, "token失效", null);
+					return Putdata.printf(-3, "token失效", null,model);
 				}
 			} else {
-				return Putdata.printf(-2, "没有token字段", null);
+				return Putdata.printf(-2, "没有token字段", null,model);
 			}
 		} else {
-			return Putdata.printf(-1, "参数为空", null);
+			return Putdata.printf(-1, "参数为空", null,model);
 		}
 	}
 	
@@ -246,7 +247,7 @@ public class AdminController {
 	 * @return
 	 */
 	@RequestMapping("/addmeal")
-	public Map<String, Object> addmeal(String token, String sid) {
+	public String addmeal(String token, String sid,Model model) {
 
 		// 参数认证
 		if (sid != null) { // 认证参数是否为空
@@ -260,7 +261,7 @@ public class AdminController {
 					Map<String, Object> studnetMap = iStudnetSevice.queryStuById(sid);
 
 					if (studnetMap == null) { // 是否是本校的学生
-						return Putdata.printf(-2, "不是本校学生", null);
+						return Putdata.printf(-2, "不是本校学生", null,model);
 					} else {
 						// 查询是否有卡
 						Map<String, Object> msgMap = iStudnetSevice.queyMsgById(sid);
@@ -269,7 +270,7 @@ public class AdminController {
 						System.out.println(M_number == null);
 						System.out.println("1"+M_number+"1");
 						if (!M_number.equals("")) { // 是否已经办卡
-							return Putdata.printf(-3, "您已经办过卡了", null);
+							return Putdata.printf(-3, "您已经办过卡了", null,model);
 						} else {
 							Message msg = new Message();
 							msg.setM_id(msgMap.get("mId").toString());
@@ -296,25 +297,25 @@ public class AdminController {
 							
 							Map<String, Object> data = new HashMap<String, Object>();
 							data.put("cardid", cardid);
-							return Putdata.printf(200, "请求成功", data);
+							return Putdata.printf(200, "请求成功", data,model);
 						}
 					}
 				} else {
-					return Putdata.printf(-1, "请重新登录", null);
+					return Putdata.printf(-1, "请重新登录", null,model);
 				}
 			} else {
-				return Putdata.printf(-1, "请先登录", null);
+				return Putdata.printf(-1, "请先登录", null,model);
 			}
 
 		} else {
-			return Putdata.printf(-1, "参数为空", null);
+			return Putdata.printf(-1, "参数为空", null,model);
 		}
 
 		
 	}
 
 	@RequestMapping("/reportcard")
-	public Map<String, Object> reportcard(String token, String cardid) {
+	public String reportcard(String token, String cardid,Model model) {
 		// 1.判断穿过来的参数是否为空
 		if (cardid != null) { // 参数是否为空
 			if (token != null) { // 验证是否登录
@@ -325,7 +326,7 @@ public class AdminController {
 					Map<String, Object> conditionMap = iStudnetSevice.queryConditionById(cardid);
 					System.out.println(conditionMap);
 					if (conditionMap == null) { // 卡号是否存在
-						return Putdata.printf(-1, "请您先去办卡", null);
+						return Putdata.printf(-1, "请您先去办卡", null,model);
 					} else {
 						Condition condition = new Condition();
 						// 更新状态
@@ -335,18 +336,18 @@ public class AdminController {
 						condition.setC_id(Integer.parseInt(conditionMap.get("cId").toString()));
 						iStudnetSevice.update(condition);
 						String msg = state.equals("0") ? "挂失成功":"解挂成功" ;
-						return Putdata.printf(200, msg, null);
+						return Putdata.printf(200, msg, null,model);
 					}
 
 				} else {
 
-					return Putdata.printf(-1, "请重新登录", null);
+					return Putdata.printf(-1, "请重新登录", null,model);
 				}
 			}else{
-				return Putdata.printf(-1, "请重新登录", null);
+				return Putdata.printf(-1, "请重新登录", null,model);
 			}
 		} else {
-			return Putdata.printf(-1, "参数为空", null);
+			return Putdata.printf(-1, "参数为空", null,model);
 		}
 
 
@@ -356,7 +357,7 @@ public class AdminController {
 	
 
 	@RequestMapping("/topup")
-	public Map<String, Object> topup(String token, String cardid, String money) {
+	public String topup(String token, String cardid, String money,Model model) {
 		// 1.判断穿过来的参数是否为空
 		if (cardid != null) { // 参数是否为空
 			if (token != null) { // 验证是否登录
@@ -369,7 +370,7 @@ public class AdminController {
 					if (conditionMap!=null) {
 						String state = conditionMap.get("cCondition").toString();
 						if (state.equals("1")) {
-							return Putdata.printf(-3, "该卡以挂失，请先解挂", null);
+							return Putdata.printf(-3, "该卡以挂失，请先解挂", null,model);
 						}else{
 							Map<String, String> monMap = iStudnetSevice.getMonById(conditionMap.get("mId").toString());
 							System.out.println(monMap);	
@@ -378,19 +379,19 @@ public class AdminController {
 							int youMMoney = Integer.parseInt(money);
 							 int mm = myMMoney+youMMoney;
 							iStudnetSevice.updateMonById(conditionMap.get("mId").toString(),mm+"" );
-							return Putdata.printf(200, "充值成功", null);
+							return Putdata.printf(200, "充值成功", null,model);
 						}
 					}else{
-						return Putdata.printf(-2, "没有该卡信息", null);
+						return Putdata.printf(-2, "没有该卡信息", null,model);
 					}
 				}else {
-					return Putdata.printf(-1, "请重新登录", null);
+					return Putdata.printf(-1, "请重新登录", null,model);
 				}
 			}else {
-				return Putdata.printf(-1, "请重新登录", null);
+				return Putdata.printf(-1, "请重新登录", null,model);
 			}
 		} else {
-			return Putdata.printf(-1, "参数为空", null);
+			return Putdata.printf(-1, "参数为空", null,model);
 		}
 
 
@@ -408,7 +409,7 @@ public class AdminController {
 		response.setHeader("Cache-Control", "no-cache");// 设置头
 		response.setDateHeader("Expires", 0);// 设置日期头
 		// 获取数据库查询的所有数据
-		List<Query> list = studentlistService.query();
+		List<Query> list = studentlistService.query(0,10000);
 		// 将查询结果带到页面 回显函数使用
 		Map<String, Object> map = new HashMap<String, Object>();
 		
@@ -501,11 +502,9 @@ public class AdminController {
 	 */
 	// 前端先上传图片预览生成图片id 给图片右上角一个删除图标 点击时remove(id) 压缩或者不压缩放入到一个数组里统一上传file
 	@RequestMapping("/uploadFile") // 同时上传多张文件前端数组存储之后点保存 统一上传 集修改删除于一体
-	@ResponseBody
-	public Map<String, Object> save(@RequestParam(value = "file", required = false) MultipartFile[] files,
-			String id) throws IllegalStateException, IOException {
-		List<String> fileUrls = new ArrayList<>();
-		List<String> fileNames = new ArrayList<>();
+	public String save(@RequestParam(value = "file", required = false) MultipartFile[] files,
+			String name,Model model) throws IllegalStateException, IOException {
+
 		for (MultipartFile file : files) {
 			//文件名称
 			String fileName = file.getOriginalFilename();
@@ -516,13 +515,20 @@ public class AdminController {
 			String url = PutFileUtils.Putimgs(fileInputStream, fileType);
 
 			if (url!=null) {// 如果文件存在
-				fileUrls.add(url);
-				fileNames.add(fileName);
+				User user = new User() ;
+				user.setName(name);
+				user.setImgs(url);
+				if(loginService.SetImg(user)){
+					return Putdata.printf(200, "上传成功", url,model);
+				}else{
+					return Putdata.printf(200, "用户不存在", null,model);
+				}
+				
+			}else{
+				return Putdata.printf(-1, "上传失败", null,model);
 			}
+			
 		}
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("errno", 0);
-		map.put("data", fileUrls);
-		return map;
+		return Putdata.printf(-5, "上传失败", null,model);
 	}
 }

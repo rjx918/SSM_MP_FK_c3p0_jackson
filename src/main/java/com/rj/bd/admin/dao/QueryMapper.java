@@ -20,7 +20,7 @@ import tk.mybatis.mapper.entity.Example;
  */
 public interface QueryMapper{
 	//查询所有
-	public List<Query>  fiandAll();
+	public List<Query>  fiandAll(@Param("page")int page,@Param("size")int size);
 	
 	
 	

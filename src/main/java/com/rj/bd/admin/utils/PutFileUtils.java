@@ -29,13 +29,13 @@ public class PutFileUtils {
 
 //	@Value("${PutFileUtils.accessKey}")
 //	public void setAccessKey(String accessKey) {
-//		PutFileUtils.accessKey = "";
+//		PutFileUtils.accessKey;
 //	}
-////	@Value("${PutFileUtils.secretKey}")
+//	@Value("${PutFileUtils.secretKey}")
 //	public void setSecretKey(String secretKey) {
 //		PutFileUtils.secretKey = secretKey;
 //	}
-////	@Value("${PutFileUtils.bucket}")
+//	@Value("${PutFileUtils.bucket}")
 //	public void setBucket(String bucket) {
 //		PutFileUtils.bucket = bucket;
 //	}

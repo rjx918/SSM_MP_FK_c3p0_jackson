@@ -23,7 +23,7 @@
 			FROM message 
 			RIGHT JOIN `condition` ON message.m_id=`condition`.m_id 
 			RIGHT JOIN money ON message.m_id=money.m_id
-			)sb  ON sa.s_id = sb.s_id
+			)sb  ON sa.s_id = sb.s_id LIMIT ${page}, ${size}
 		</select>
 			
 			

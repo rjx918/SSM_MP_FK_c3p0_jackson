@@ -7,7 +7,7 @@ import com.rj.bd.admin.entity.Query;
 
 
 public interface IStudentlistService {
-	public List<Query> query();
+	public List<Query> query(int page,int size);
 	
 	public List<Query> studentsearch(String search);
 	

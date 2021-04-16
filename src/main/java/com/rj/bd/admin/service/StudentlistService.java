@@ -46,8 +46,9 @@ public class StudentlistService implements IStudentlistService{
 	public Classesinfo classesinfo;
 	
 	//查询是所有学生
-	public List<Query> query() {
-		return queryMapper.fiandAll();
+	public List<Query> query(int page,int size) {
+		System.err.println(page+"--"+size);
+		return queryMapper.fiandAll(page,size);
 	}
 	
 	
