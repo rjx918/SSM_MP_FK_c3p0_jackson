@@ -7,7 +7,10 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.baomidou.mybatisplus.core.mapper.Mapper;
 import com.rj.bd.admin.entity.Query;
+
+import tk.mybatis.mapper.entity.Example;
 
 /**
  * @desc 
@@ -15,7 +18,7 @@ import com.rj.bd.admin.entity.Query;
  * @version 1.0
  * @time 2021年4月13日 下午11:52:41
  */
-public interface QueryMapper {
+public interface QueryMapper{
 	//查询所有
 	public List<Query>  fiandAll();
 	
@@ -24,5 +27,11 @@ public interface QueryMapper {
 	//查询符合条件的
 	
 	public List<Query> studentsearch(@Param("search")String search);
+
+
+
+
+
+
 	
 }

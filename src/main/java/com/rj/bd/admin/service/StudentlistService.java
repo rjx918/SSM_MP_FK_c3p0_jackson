@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.rj.bd.admin.dao.Classesinfo;
 import com.rj.bd.admin.dao.DatasMapper;
 import com.rj.bd.admin.dao.MessageMapper;
@@ -20,6 +22,9 @@ import com.rj.bd.admin.entity.Query;
 import com.rj.bd.admin.entity.Student;
 import com.rj.bd.admin.entity.User;
 import com.sun.org.apache.regexp.internal.recompile;
+
+import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.mapper.entity.Example.Criteria;
 
 @Transactional  //注解式事务
 @Service("studentlistService")
@@ -112,6 +117,10 @@ public class StudentlistService implements IStudentlistService{
 	public List<String> classesinfo(){
 		return classesinfo.ClassesSS();
 	}
+	
+	
+	
+	
 	
 	
  

@@ -1,7 +1,9 @@
 package com.rj.bd.admin.controller;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,14 +19,17 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.aspectj.weaver.patterns.HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStuffAnywhereVisitor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.YamlMapFactoryBean;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.github.pagehelper.PageInfo;
 import com.rj.bd.admin.entity.Condition;
 import com.rj.bd.admin.entity.Message;
 import com.rj.bd.admin.entity.Money;
@@ -35,6 +40,7 @@ import com.rj.bd.admin.service.IIndexService;
 import com.rj.bd.admin.service.ILoginService;
 import com.rj.bd.admin.service.IStudentlistService;
 import com.rj.bd.admin.service.IStudnetSevice;
+import com.rj.bd.admin.utils.PutFileUtils;
 import com.rj.bd.admin.utils.Putdata;
 import com.sun.org.apache.xpath.internal.operations.And;
 
@@ -57,6 +63,8 @@ public class AdminController {
 	
 	@Autowired
 	private IStudnetSevice iStudnetSevice;
+	
+	
 
 	@RequestMapping("/login")
 	public Map<String, Object> loginAdmin(User u, HttpServletRequest request) {
@@ -127,6 +135,9 @@ public class AdminController {
 					// 这里已经验证成功了
 					System.out.println("验证成功");
 					return Putdata.printf(200, "获取成功", studentlistService.query());
+					
+					
+					
 				} else {
 					return Putdata.printf(-3, "token失效", null);
 				}
@@ -137,6 +148,14 @@ public class AdminController {
 			return Putdata.printf(-1, "参数为空", null);
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	// 搜索数据
@@ -332,6 +351,9 @@ public class AdminController {
 
 
 	}
+	
+	
+	
 
 	@RequestMapping("/topup")
 	public Map<String, Object> topup(String token, String cardid, String money) {
@@ -467,8 +489,40 @@ public class AdminController {
 	}
 	
 	
-	
-	
-	
+	/**
+	 * @desc 上传图片
+	 * @param files
+	 *            文件
+	 * @param userId
+	 *            用户id
+	 * @return
+	 * @throws IllegalStateException
+	 * @throws IOException
+	 */
+	// 前端先上传图片预览生成图片id 给图片右上角一个删除图标 点击时remove(id) 压缩或者不压缩放入到一个数组里统一上传file
+	@RequestMapping("/uploadFile") // 同时上传多张文件前端数组存储之后点保存 统一上传 集修改删除于一体
+	@ResponseBody
+	public Map<String, Object> save(@RequestParam(value = "file", required = false) MultipartFile[] files,
+			String id) throws IllegalStateException, IOException {
+		List<String> fileUrls = new ArrayList<>();
+		List<String> fileNames = new ArrayList<>();
+		for (MultipartFile file : files) {
+			//文件名称
+			String fileName = file.getOriginalFilename();
+			//文件后缀
+			String fileType = fileName.substring(fileName.indexOf("."), fileName.length());
+			// 文件InputStream
+			InputStream fileInputStream  = file.getInputStream();
+			String url = PutFileUtils.Putimgs(fileInputStream, fileType);
 
+			if (url!=null) {// 如果文件存在
+				fileUrls.add(url);
+				fileNames.add(fileName);
+			}
+		}
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("errno", 0);
+		map.put("data", fileUrls);
+		return map;
+	}
 }

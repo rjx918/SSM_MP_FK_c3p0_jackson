@@ -14,16 +14,16 @@
 	<!-- 1.开启注解/注解驱动 -->
 	<mvc:annotation-driven />
 	<!-- <mvc:resources mapping="/resources/*" location="/resources/"/> -->
+	
+
+
 
 
 	<!-- 2.自动注解扫描包 -->
-	<context:component-scan base-package="com.rj.bd">
-		<context:include-filter type="annotation"
-			expression="org.springframework.stereotype.Controller" />
-		<context:exclude-filter type="annotation"
-			expression="org.springframework.stereotype.Service" />
+	<context:component-scan base-package="com.rj">
+		<context:include-filter type="annotation"  expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
-
+	
 
 
 	<!-- 3.定义跳转的文件的前后缀 ，视图模式配置 -->
@@ -55,6 +55,13 @@
 			</props>
 		</property>
 	</bean>
+	
+	
+
+    
+    
+    
+
 
 
 	<!-- 5.注册freemarker视图解析器 -->

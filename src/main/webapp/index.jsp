@@ -7,13 +7,11 @@
 <title>SSM_MP_FK_c3p0_jackson</title>
 </head>
 <body>
-<a  href="<%=request.getContextPath()%>/user/query">User模块的查询</a>
-<a  href="<%=request.getContextPath()%>/table/query">TableYS模块的查询</a>
+<a>User模块的查询</a>
 
 <br/>
 <hr/>
 
-<a href="<%=request.getContextPath()%>/user/query02">User模块返回json格式数据</a>
 
 
 
